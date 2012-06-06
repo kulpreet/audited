@@ -14,7 +14,7 @@ module Audited
   module Auditor #:nodoc:
     extend ActiveSupport::Concern
 
-    CALLBACKS = [:audit_create, :audit_update, :audit_destroy]
+    CALLBACKS = [:audit_create, :audit_update, :audit_destroy, :audit_read]
 
     module ClassMethods
       # == Configuration options
@@ -79,6 +79,7 @@ module Audited
         after_create  :audit_create if !options[:on] || (options[:on] && options[:on].include?(:create))
         before_update :audit_update if !options[:on] || (options[:on] && options[:on].include?(:update))
         before_destroy :audit_destroy if !options[:on] || (options[:on] && options[:on].include?(:destroy))
+        after_find :audit_read if (options[:on] && options[:on].include?(:read))
 
         # Define and set an after_audit callback. This might be useful if you want
         # to notify a party after the audit has been created.
@@ -209,6 +210,11 @@ module Audited
 
       def audit_destroy
         write_audit(:action => 'destroy', :audited_changes => audited_attributes,
+                    :comment => audit_comment)
+      end
+
+      def audit_read
+        write_audit(:action => 'read', :audited_changes => audited_attributes,
                     :comment => audit_comment)
       end
 
