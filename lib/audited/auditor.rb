@@ -14,7 +14,7 @@ module Audited
   module Auditor #:nodoc:
     extend ActiveSupport::Concern
 
-    CALLBACKS = [:audit_create, :audit_update, :audit_destroy, :audit_read]
+    CALLBACKS = [:audit_create, :audit_update, :audit_destroy]
 
     module ClassMethods
       # == Configuration options
